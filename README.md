@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-AGPL--3.0-red.svg)](LICENSE)
 
 ZMathJBoardF 是一款基于 PyQt5 开发的智能几何绘图软件，集成了 AI 辅助绘图功能，专为数学教学和几何学习设计。
-
+<img width="132" height="132" alt="mathb" src="https://github.com/user-attachments/assets/be326bf2-3229-4712-920b-a690b8c8a1b5" />
 ## 作者说明
 咱是一名来自深圳的初三在校生，这是我利用课余时间捣鼓的小项目～由于还在“学业+编程”双线作战，软件里可能藏着一些小 bug（毕竟没那么多时间逐行抠细节），还请大家多多包涵！另外，软件的动画部分目前还有些小缺陷，比如偶尔会有卡顿或过渡不流畅的情况，我会在后续更新中尽快优化，争取让动画效果更丝滑～
 
