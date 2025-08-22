@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyQt5](https://img.shields.io/badge/PyQt5-5.15.9-green.svg)](https://pypi.org/project/PyQt5/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-AGPL--3.0-red.svg)](LICENSE)
 
 ZMathJBoardF 是一款基于 PyQt5 开发的智能几何绘图软件，集成了 AI 辅助绘图功能，专为数学教学和几何学习设计。
 
@@ -56,7 +56,7 @@ ZMathJBoardF 是一款基于 PyQt5 开发的智能几何绘图软件，集成了
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyQt5](https://img.shields.io/badge/PyQt5-5.15.9-green.svg)](https://pypi.org/project/PyQt5/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-AGPL--3.0-red.svg)](LICENSE)
 
 ZMathJBoardF is an intelligent geometry drawing software developed based on PyQt5, integrated with AI-assisted drawing functions, specifically designed for mathematics teaching and geometry learning.
 
