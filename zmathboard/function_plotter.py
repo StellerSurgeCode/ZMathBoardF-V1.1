@@ -90,9 +90,17 @@ class FunctionExpression:
     def is_valid_expression(self) -> bool:
         """检查表达式是否有效"""
         try:
-            # 测试计算一个点
-            test_value = self.evaluate(0)
-            self.valid = not (math.isnan(test_value) and self.expression.strip() != "")
+            # 测试计算多个点，包括定义域内的点
+            test_points = [0, self.x_min, self.x_max, (self.x_min + self.x_max) / 2]
+            valid_count = 0
+            
+            for x in test_points:
+                test_value = self.evaluate(x)
+                if not math.isnan(test_value) and not math.isinf(test_value):
+                    valid_count += 1
+            
+            # 如果至少有一个点有效，就认为表达式是有效的
+            self.valid = valid_count > 0 and self.expression.strip() != ""
             return self.valid
         except:
             self.valid = False
@@ -246,9 +254,18 @@ class FunctionCanvas(QWidget):
         width = self.width()
         height = self.height()
         
+        # 防止除零错误
+        x_range = self.x_max - self.x_min
+        y_range = self.y_max - self.y_min
+        
+        if abs(x_range) < 1e-10:
+            x_range = 1.0
+        if abs(y_range) < 1e-10:
+            y_range = 1.0
+        
         # 计算屏幕坐标
-        screen_x = (world_point.x() - self.x_min) / (self.x_max - self.x_min) * width
-        screen_y = (self.y_max - world_point.y()) / (self.y_max - self.y_min) * height
+        screen_x = (world_point.x() - self.x_min) / x_range * width
+        screen_y = (self.y_max - world_point.y()) / y_range * height
         
         return QPointF(screen_x, screen_y)
     
@@ -292,6 +309,12 @@ class FunctionCanvas(QWidget):
         # 计算网格间距
         x_range = self.x_max - self.x_min
         y_range = self.y_max - self.y_min
+        
+        # 防止除零错误
+        if abs(x_range) < 1e-10:
+            x_range = 1.0
+        if abs(y_range) < 1e-10:
+            y_range = 1.0
         
         # 自适应网格密度
         x_step = self.calculate_grid_step(x_range)
@@ -344,14 +367,23 @@ class FunctionCanvas(QWidget):
         width = self.width()
         height = self.height()
         
+        # 防止除零错误
+        x_range = self.x_max - self.x_min
+        y_range = self.y_max - self.y_min
+        
+        if abs(x_range) < 1e-10:
+            x_range = 1.0
+        if abs(y_range) < 1e-10:
+            y_range = 1.0
+        
         # X轴
         if self.y_min <= 0 <= self.y_max:
-            y_screen = (self.y_max - 0) / (self.y_max - self.y_min) * height
+            y_screen = (self.y_max - 0) / y_range * height
             painter.drawLine(0, int(y_screen), width, int(y_screen))
         
         # Y轴
         if self.x_min <= 0 <= self.x_max:
-            x_screen = (0 - self.x_min) / (self.x_max - self.x_min) * width
+            x_screen = (0 - self.x_min) / x_range * width
             painter.drawLine(int(x_screen), 0, int(x_screen), height)
         
         # 绘制刻度标签
@@ -365,29 +397,38 @@ class FunctionCanvas(QWidget):
         width = self.width()
         height = self.height()
         
+        # 防止除零错误
+        x_range = self.x_max - self.x_min
+        y_range = self.y_max - self.y_min
+        
+        if abs(x_range) < 1e-10:
+            x_range = 1.0
+        if abs(y_range) < 1e-10:
+            y_range = 1.0
+        
         # X轴刻度
-        x_step = self.calculate_grid_step(self.x_max - self.x_min)
+        x_step = self.calculate_grid_step(x_range)
         x = math.ceil(self.x_min / x_step) * x_step
         
-        y_axis_screen = (self.y_max - 0) / (self.y_max - self.y_min) * height
+        y_axis_screen = (self.y_max - 0) / y_range * height
         y_axis_screen = max(15, min(height - 15, y_axis_screen))  # 限制在画布范围内
         
         while x <= self.x_max:
             if abs(x) > 1e-10:  # 跳过原点
-                screen_x = (x - self.x_min) / (self.x_max - self.x_min) * width
+                screen_x = (x - self.x_min) / x_range * width
                 painter.drawText(int(screen_x - 15), int(y_axis_screen + 15), f"{x:.1f}")
             x += x_step
         
         # Y轴刻度
-        y_step = self.calculate_grid_step(self.y_max - self.y_min)
+        y_step = self.calculate_grid_step(y_range)
         y = math.ceil(self.y_min / y_step) * y_step
         
-        x_axis_screen = (0 - self.x_min) / (self.x_max - self.x_min) * width
+        x_axis_screen = (0 - self.x_min) / x_range * width
         x_axis_screen = max(25, min(width - 25, x_axis_screen))  # 限制在画布范围内
         
         while y <= self.y_max:
             if abs(y) > 1e-10:  # 跳过原点
-                screen_y = (self.y_max - y) / (self.y_max - self.y_min) * height
+                screen_y = (self.y_max - y) / y_range * height
                 painter.drawText(int(x_axis_screen - 25), int(screen_y + 5), f"{y:.1f}")
             y += y_step
     
@@ -560,9 +601,15 @@ class FunctionCanvas(QWidget):
         min_x, max_x = min(x_coords), max(x_coords)
         min_y, max_y = min(y_coords), max(y_coords)
         
-        # 添加边距
-        margin_x = (max_x - min_x) * 0.1
-        margin_y = (max_y - min_y) * 0.1
+        # 添加边距，确保范围不为0
+        margin_x = max((max_x - min_x) * 0.1, 0.1)  # 至少0.1的边距
+        margin_y = max((max_y - min_y) * 0.1, 0.1)  # 至少0.1的边距
+        
+        # 如果Y轴范围为0，设置一个合理的默认范围
+        if abs(max_y - min_y) < 1e-10:
+            min_y -= 1.0
+            max_y += 1.0
+            margin_y = 0.1
         
         self.set_view_range(
             min_x - margin_x, max_x + margin_x,
